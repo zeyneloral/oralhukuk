@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Submission</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .card {
+            width: 45%;
+            margin: 0 10px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            box-sizing: border-box;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .separator {
+            width: 5px;
+            background: linear-gradient(to bottom, #ffcc00, #ffcc00);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid #ffcc00;
+            font-size: 16px;
+            background: none;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: #ff9900;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff9900;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // makale sayfası şifresi burda
+        var encodedPassword = "emNpbmFnZXpjNDc0NS4=";
+
+        // Function to decode Base64
+        function decodeBase64(base64) {
+            return atob(base64);
+        }
+
+        // Function to protect the page with a passcode
+        function passcodeProtect() {
+            if (localStorage.getItem('authenticated') !== 'true') {
+                var passcode = prompt("Gizli Sayfa ; Şifre : ");
+                if (passcode === decodeBase64(encodedPassword)) {
+                    localStorage.setItem('authenticated', 'true');
+                    alert('Makale Paneline Girildi..!');
+                } else {
+                    alert("YANLIŞ ŞİFRE");
+                    window.open('https://youtube.com',"_self");
+                }
+            }
+        }
+
+        passcodeProtect();
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const detail = document.getElementById('detail').value;
+            const image = document.getElementById('image').value;
+
+            const data = {
+                title: title,
+                detail: detail,
+                imag: image
+            };
+
+            fetch('https://66b299d07fba54a5b7ea129a.mockapi.io/articles/articles/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Makale başarıyla gönderildi!');
+                // Optionally, clear the form after submission
+                document.querySelector('form').reset();
+            })
+            .catch(error => {
+                alert('Makale gönderilirken hata oluştu!');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    <div class="container">
+        <div class="card">
+            <h2>MAKALE EKLEME</h2>
+            <form onsubmit="handleSubmit(event)">
+                <input type="text" id="title" placeholder="Başlık" required>
+                <input type="url" id="image" placeholder="Resim URL'si" required>
+                <input type="text" id="detail" placeholder="Makale Detayı" required>
+                <button type="submit">Gönder</button>
+            </form>
+        </div>
+        <div class="separator"></div>
+    </div>
+</body>
+</html>
